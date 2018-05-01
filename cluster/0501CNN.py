@@ -5,7 +5,7 @@ Created on Tue May  1 09:50:14 2018
 @author: zhylucky
 """
 
-#CNN
+# CNN
 import numpy as np
 np.random.seed (1337) # for reproducibility
 from keras.datasets import mnist
@@ -45,11 +45,11 @@ model.add(MaxPooling2D(
         border_mode = 'same',    # padding method 
 ))  
 
-#Conv layer 2 output shape (64, 14, 14)
+# Conv layer 2 output shape (64, 14, 14)
 model.add(Convolution2D(64, 5, 5, border_mode = 'same'))
 model.add(Activation('relu'))
 
-#Pooling layer 2 (max pooling) output shape (64, 7, 7)
+# Pooling layer 2 (max pooling) output shape (64, 7, 7)
 model.add(MaxPooling2D(pool_size = (2,2), 
                        border_mode = 'same'))
 
@@ -65,16 +65,20 @@ model.add(Activation('softmax'))
 # define optimizer
 adam = Adam(lr = 1e-4)
 
+
+# CNN model summary
+model.summary()
+
 # We add matrics to get more results
 model.compile(optimizer = adam,
               loss = 'categorical_crossentropy',
               metrics = ['accuracy'])
 
-print ('Training ---------------')
+print('Training ---------------')
 # train the model
-model.fit(X_train, y_train, nb_epoch = 2, batch_size =32)
+model.fit(X_train, y_train, nb_epoch = 5, batch_size =32)
 
-print ('\nTesting --------------')
+print('\nTesting --------------')
 # Evaluate the model with the metrics we defined earlier
 loss, accuracy = model.evaluate(X_test, y_test)
 

@@ -3,11 +3,10 @@ library(nnet)
 library(NeuralNetTools)
 library(caTools) ##split data
 library(tidyverse) 
-library(kerasR)
 library(tensorflow)
 library(keras)
 library(clusterSim)
-
+library(matrixStats)
 rm(list = ls())
 
 # data_raw = read.csv("/Users/Janet/Desktop/EBAC/courses/???BS???5206 COMPUTATIONAL INTELLIGENCE/assignment/brooklynhomes2003to2017/brooklyn_sales_map.csv")
@@ -16,7 +15,7 @@ rm(list = ls())
 # attribute_orignal = names(data_raw)
 # attribute_selected = subset(data_raw, select = -c(borough, easement, address, apartment_number, zip_code))
 
-data = read.csv("/Users/Janet/Desktop/EBAC/courses/???BS???5206 COMPUTATIONAL INTELLIGENCE/assignment/data_cleaned.csv")
+data = read.csv("/Users/alexjzy/Desktop/Py-Projects/NUS-CI1-CA1/regression/r/data_cleaned.csv")
 
 ##select variables
 data = data %>%
@@ -30,26 +29,26 @@ data = data %>%
                     gross_sqft,
                     # tax_class_at_sale,
                     LotArea,
-                    BldgArea,
-                    ComArea,
-                    ResArea,
-                    OfficeArea,
-                    RetailArea,
-                    GarageArea,
-                    StrgeArea,
-                    FactryArea,
-                    OtherArea,
-                    NumBldgs,
-                    NumFloors,
-                    UnitsRes,
-                    UnitsTotal,
-                    AssessLand,
+                    # BldgArea,
+                    # ComArea,
+                    # ResArea,
+                    # OfficeArea,
+                    # RetailArea,
+                    # GarageArea,
+                    # StrgeArea,
+                    # FactryArea,
+                    # OtherArea,
+                    # NumBldgs,
+                    # NumFloors,
+                    # UnitsRes,
+                    # UnitsTotal,
+                    # AssessLand,
                     YearBuilt,
-                    YearAlter1,
-                    YearAlter2,
-                    BuiltFAR,
-                    ResidFAR,
-                    CommFAR,
+                    # YearAlter1,
+                    # YearAlter2,
+                    # BuiltFAR,
+                    # ResidFAR,
+                    # CommFAR,
                     FacilFAR)) %>%
   filter(YearBuilt !=0)
 # data.Normalization(type = "n3")
@@ -97,10 +96,12 @@ test_scale = test_scale[1:4831,]
 model = keras_model_sequential()
 model %>%
   layer_dense(units = ncol(train_scale), input_shape = c(ncol(train_scale)), activation = "sigmoid", kernel_initializer='normal') %>% 
-  layer_dense(units = 6, activation = "sigmoid", kernel_initializer='normal') %>% 
+  layer_dense(units = 10, activation = "sigmoid", kernel_initializer='normal') %>% 
   layer_dense(units = 1, activation = "sigmoid", kernel_initializer='normal')
 
 summary(model)
+
+
 
 ## evaluate model
 model %>% compile(
@@ -108,8 +109,17 @@ model %>% compile(
   loss = "mse"
 )
 
+k_set_value(model$optimizer$lr, 10.0)
+
+
+
 result = model %>%
-  fit(as.matrix(train_scale), as.matrix(train_y), epochs = 100, batch_size = 1000, validation_split = 0.2)
+  fit(as.matrix(train_scale), 
+      as.matrix(train_y), 
+      epochs = 10, 
+      batch_size = 10, 
+      validation_split = 0.2
+    )
 plot(result)
 
 
