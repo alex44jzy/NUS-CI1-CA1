@@ -63,8 +63,21 @@ test = data[!splitData,]
 ## normalize training dataset
 train_x = train %>% subset(select = -c(sale_price))
 train_y = train %>% subset(select = c(sale_price))
-train_scale = data.Normalization(train_x, type = "n3")
 
+
+maxs <- apply(train_x, 2, max)
+mins <- apply(train_x, 2, min) 
+
+scaled_x <- as.data.frame(scale(train_x, center = mins, scale = maxs - mins))
+scaled_y <- as.data.frame(scale(train_y, center = 0, scale = max(train_y) - min(train_y)))
+scaled_y <- log(scaled_y)
+
+
+
+
+
+train_scale = data.Normalization(train_x, type = "n3")
+# train_y = data.Normalization(train_y, type = "n3")
 ##normalize test dataset using the same parameters and the function as training dataset
 test_x = test %>% subset(select = -c(sale_price))
 test_y = test %>% subset(select = c(sale_price))
@@ -92,12 +105,17 @@ test_scale = test_scale[1:4831,]
 
 
 #######################  MLFF keras  ###########################
+scaled_x
+scaled_y
+
+
+
 
 model = keras_model_sequential()
 model %>%
-  layer_dense(units = ncol(train_scale), input_shape = c(ncol(train_scale)), activation = "sigmoid", kernel_initializer='normal') %>% 
-  layer_dense(units = 10, activation = "sigmoid", kernel_initializer='normal') %>% 
-  layer_dense(units = 1, activation = "sigmoid", kernel_initializer='normal')
+  layer_dense(units = ncol(scaled_x), input_shape = c(ncol(scaled_x)), activation = "sigmoid") %>% 
+  layer_dense(units = 20, activation = "sigmoid") %>% 
+  layer_dense(units = 1, activation = "sigmoid")
 
 summary(model)
 
@@ -109,15 +127,11 @@ model %>% compile(
   loss = "mse"
 )
 
-k_set_value(model$optimizer$lr, 10.0)
-
-
-
 result = model %>%
-  fit(as.matrix(train_scale), 
-      as.matrix(train_y), 
-      epochs = 10, 
-      batch_size = 10, 
+  fit(as.matrix(scaled_x), 
+      as.matrix(scaled_y), 
+      epochs = 100, 
+      batch_size = 1, 
       validation_split = 0.2
     )
 plot(result)

@@ -1,0 +1,12 @@
+#!/bin/bash
+#PBS -k oe
+#PBS -q gpu
+#PBS -j oe
+#PBS -l select=1:ncpus=24:mem=80GB
+#PBS -l walltime=24:00:00
+#PBS -N iss_vgg14
+#PBS -P Personal
+cd ${PBS_O_WORKDIR}
+module load python/3.5.1
+module load tensorflow/1.0+keras
+python3 final.py > output_log.txt
