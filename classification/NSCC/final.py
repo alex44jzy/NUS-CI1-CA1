@@ -57,21 +57,22 @@ x_train, y_train, x_test, y_test,  y_test_confusion = [], [], [], [], []
 num_classes = 7
 
 for i in range(1,num_of_instances + 1):
- emotion, img, usage = lines[i].split(",")
 
- val = img.split(" ")
- pixels = np.array(val, 'float32')
+    emotion, img, usage = lines[i].split(",")
 
- if 'PrivateTest' in usage:
-     y_test_confusion.append(emotion)
+    val = img.split(" ")
+    pixels = np.array(val, 'float32')
 
- emotion = np_utils.to_categorical(emotion, num_classes)
- if 'Training' in usage:
-     y_train.append(emotion)
-     x_train.append(pixels)
- elif 'PrivateTest' in usage:
-     y_test.append(emotion)
-     x_test.append(pixels)
+    if 'PrivateTest' in usage:
+        y_test_confusion.append(emotion)
+
+    emotion = np_utils.to_categorical(emotion, num_classes)
+    if 'Training' in usage:
+        y_train.append(emotion)
+        x_train.append(pixels)
+    elif 'PrivateTest' in usage:
+        y_test.append(emotion)
+        x_test.append(pixels)
 
 
 #pre-process data
