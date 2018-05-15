@@ -86,6 +86,15 @@ x_test = x_test.reshape(x_test.shape[0],48,48)
 x_test = x_test.reshape(-1, 1, 48, 48)/255
 y_test = np.array(y_test,order='K')
 
+print("x_train shape: ", x_train.shape)
+print("y_train shape: ", y_train.shape)
+print("x_test shape: ", x_test.shape)
+print("y_test shape: ", y_test.shape)
+
+
+
+
+
 """# image augmentation"""
 
 gen = ImageDataGenerator(featurewise_center=True,
@@ -491,6 +500,7 @@ model_vgg14.compile(optimizer = Adam(lr = 1e-4),
               metrics = ['accuracy'])
 
 history_vgg14 =  model_vgg14.fit_generator(train_generator, steps_per_epoch=len(x_train)//batch_size, epochs=epochs, validation_data= (x_test,y_test))
+
 
 """# plot graph"""
 
